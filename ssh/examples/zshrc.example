@@ -1,0 +1,67 @@
+#!/usr/bin/env zsh
+#shellcheck shell=zsh
+#set -xplr
+#export DEV=true
+[ "${DEV}" ] && set -x || set +x
+
+# ---------------------------------------------------------------------------------------------------
+#                                               /\_/\
+#                                              ( o.o )
+#                                               > ^ <
+#                                _SSH zsh example for Port knocking_
+#
+# MAINTAINER:.................. <David Chevallier>
+# MAIL:........................ <huegelig.gelehrten-0y@icloud.com>
+# _________________________ (☞ﾟヮﾟ)☞ _List of Documentations_ ☜(ﾟヮﾟ☜) _______________________________
+# Docu:........................ <https://zsh.sourceforge.io/Doc/>
+#                               <http://zsh.sourceforge.net/Doc/Release/Shell-Builtin-Commands.html>
+#                               <https://man.openbsd.org/sshd_config>
+#                               <https://github.com/reyjrar/sshlint>
+#                               <https://wiki.archlinux.org/title/Port_knocking>
+# Validator:................... <https://www.shellcheck.net/>
+# Copyright:................... <2023, David Chevallier>
+# License:..................... <MIT>
+# ---------------------------------------------------------------------------------------------------
+#
+#                                           MIT License
+#
+# Copyright (c) 2023 David Chevallier
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+# ---------------------------------------------------------------------------------------------------
+
+SEQUENCE_OPEN="1337,1338,1339"
+SEQUENCE_CLOSE="2468,3579,4680"
+SSH_CONFIG_FILE="$HOME/.ssh/config"
+
+ssh() {
+    if [[ $1 == "server" ]]; then
+        IP_ADDRESS=$(awk -v host="$1" '$1=="Host" {h=$2} $1=="HostName" && h==host {print $2}' "$SSH_CONFIG_FILE")
+        for PORT in $SEQUENCE_OPEN; do
+            nmap -Pn --host-timeout 201ms --max-retries 0 -p "$PORT" "$IP_ADDRESS"
+        done
+        if command ssh "$@"; then
+            for PORT in $SEQUENCE_CLOSE; do
+                nmap -Pn --host-timeout 201ms --max-retries 0 -p "$PORT" "$IP_ADDRESS"
+            done
+        fi
+    else
+        command ssh "$@"
+    fi
+}

@@ -1,0 +1,57 @@
+/vimrc~
+*.swp
+/vim/.netrwhist
+vim/bundle
+vim/
+*.zwc
+
+### VScode ###
+*.html
+doc/
+-test
+testOutput
+.vs
+test-results.xml
+dist
+stats.json
+**/npm-debug.log
+data/app/**/db/**
+data/app/**/proc/**
+data/app/**/sys/**
+data/app/**/acme/**
+data/app/**/shared/**
+
+### Bin Files ###
+bin/jaeger-1.38.1-darwin-arm64/
+
+### dev files ###
+_bootstraper_swift/
+
+### VIM ###
+Session.vim
+/.rvmrc
+.DS_Store
+/.build
+/Packages
+/*.xcodeproj
+
+# Dotfiles
+/.rvmrc
+.sw[a-z]
+.*.sw[a-z]
+*.un~
+*.dpkg-dist
+*.pyc
+.DS_Store
+.bundle
+.yardwarn
+.idea/
+.cache
+
+# Logs
+screenlog.*
+log.*
+*.log
+
+# tmp files
+*tmp*
